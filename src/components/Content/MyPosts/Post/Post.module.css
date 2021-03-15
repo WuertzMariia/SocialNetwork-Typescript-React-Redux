@@ -1,0 +1,19 @@
+.post {
+  grid-area: p;
+}
+
+
+.postitem {
+  padding: 15px;
+  display: grid;
+  grid-auto-columns: 80px 8fr;
+  grid-template-areas:
+"i p";
+}
+
+
+
+.postitem img {
+  width: 20px;
+  grid-area: i;
+}

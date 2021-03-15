@@ -1,0 +1,16 @@
+.content {
+
+  grid-area: c;
+  padding: 20px;
+}
+
+.content img {
+  width: 60px;
+  margin: 0 auto;
+}
+
+textarea:not([resize="true"]) {
+  resize: none !important;
+  height: 50px;
+      width: 350px;
+}

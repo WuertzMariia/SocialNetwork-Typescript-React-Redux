@@ -1,0 +1,17 @@
+
+
+.style_item {
+    color: black;
+    display: flex;
+    flex-direction: row; 
+    justify-content: left;
+align-content: center; 
+align-items: center; 
+padding: 10px; 
+}
+
+
+.item {
+    
+    min-width: 80px; 
+}

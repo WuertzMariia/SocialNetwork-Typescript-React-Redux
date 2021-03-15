@@ -1,0 +1,38 @@
+.sidebar {
+
+  grid-area: s;
+  padding: 10px 5px 10px 5px;
+
+  font-family: 'B612', sans-serif;
+  color: #333;
+  font-weight: 400;
+  position: sticky;
+  top: 22%;
+
+  left: 0%;
+
+}
+
+.item a{
+  color: #333;
+  text-decoration: none;
+}
+
+.item a.activeLink{
+
+  text-decoration: underline;
+}
+.sidebar_friends {
+
+  grid-area: s;
+  padding: 10px 5px 10px 5px;
+
+  font-family: 'B612', sans-serif;
+  color: #333;
+  font-weight: 400;
+  position: sticky;
+  top: 50%;
+
+  left: 0%;
+
+}

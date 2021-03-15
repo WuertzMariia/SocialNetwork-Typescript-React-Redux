@@ -1,0 +1,18 @@
+.friendsblock {
+  
+  display:flex;
+  flex-direction: row; 
+  align-content: space-around;
+  justify-content:left; 
+   
+}
+
+.imageClass {
+  border-radius: 50%;
+  max-width: 35px; 
+  min-width: 35px;
+}
+
+.friendsblock a {
+  color: rosybrown;
+}

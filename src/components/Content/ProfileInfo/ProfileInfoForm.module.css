@@ -1,0 +1,14 @@
+.imgClass {
+    width: 30%; 
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+   margin-top: 10px;
+}
+.each_field {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 10px 0;
+}

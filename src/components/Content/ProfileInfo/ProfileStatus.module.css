@@ -1,0 +1,13 @@
+input {
+    width: 250px;
+ 
+}
+
+.main {
+
+ 
+    display: flex;
+    flex-direction: column; 
+}
+
+

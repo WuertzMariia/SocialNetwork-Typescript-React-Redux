@@ -1,0 +1,12 @@
+
+
+
+.profile {
+  height: 100%;
+  font-family: 'B612', sans-serif;
+  grid-area: c;
+  padding: 20px;
+  display:flex; 
+  flex-direction: column;
+  margin-left: 70px;
+}

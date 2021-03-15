@@ -1,0 +1,74 @@
+.dialogs {
+    grid-area: c;
+    margin-left: 70px;
+    display: grid;
+    grid-template-columns: 3fr 7fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 
+    "d m"
+    "d t";
+    font-family: 'B612', sans-serif;
+    color: #333;
+    font-weight: 400;
+}
+
+.messages {
+    grid-area: m;
+}
+
+.dialog_items {
+    grid-area: d; 
+}
+
+.items {
+    color: black;
+}
+.messages {
+    align-self:flex-end;
+    align-content: flex-end;
+    justify-self: end;
+}
+.style_dialogs {
+    background-color: #e2d5e6;
+    background-image: linear-gradient(315deg, #e2d5e6 0%, #e1d4e6 74%);
+    border-radius: 3px;
+
+    -webkit-box-shadow: 5px 2px 13px -3px #000000;
+    box-shadow: 5px 2px 13px -3px #000000;
+    display: flex;
+flex-direction: column;
+    justify-content: space-between;
+    height: 300px;
+    max-width: 500px;
+    padding: 20px;
+
+}
+
+.textar {
+    grid-area: t; 
+   
+    height: 100px;
+      width: 350px;
+}
+
+textarea:not([resize="true"]) {
+    resize: none !important;
+  }
+
+  .sendMessage {
+      display: flex; 
+      flex-direction: column;
+      align-self:flex-end;
+      align-content: flex-end;
+      justify-self: end;
+      
+  }
+
+  .sendMessage > button {
+      width: 100px;  
+  }
+
+  button {
+   float: right;
+    margin-top: 10px;
+  }

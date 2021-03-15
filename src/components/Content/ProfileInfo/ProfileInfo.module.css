@@ -1,0 +1,43 @@
+
+
+.imgClass {
+    width: 30%; 
+}
+
+.main {
+    display: flex;
+    flex-direction: column; 
+    position: relative; 
+}
+
+ul{
+    list-style: none;
+}
+
+[type="file"] {
+    heigth: 0;
+    width: 0;
+    overflow: hidden;
+
+}
+
+.btn {
+    color: #fff !important;
+
+    text-decoration: none;
+    background: #ed3330;
+    padding: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    border: none;
+    transition: all 0.4s ease 0s;
+}
+
+.btn:hover {
+    background: #434343;
+    -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    box-shadow: 5px 40px -10px rgba(0,0,0,0.57);
+    transition: all 0.4s ease 0s;
+}
+
