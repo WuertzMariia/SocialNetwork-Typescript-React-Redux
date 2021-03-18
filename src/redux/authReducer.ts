@@ -1,47 +1,28 @@
-import {authAPI, captchaAPI, loginAPI, ResultCodeForCaptcha, ResultCodesEnum} from "../api/api";
+import {ResultCodeForCaptcha, ResultCodesEnum} from "../api/api";
 import {ThunkAction} from "redux-thunk";
-import {AppStateType} from "./redux_store";
+import {AppStateType, InferActionTypes} from "./redux_store";
+import {authAPI, loginAPI} from "../api/authApi";
+import {captchaAPI} from "../api/captchaApi";
 
-
-const SETUSERSTATE = "soc_network_auth_set_user_auth_state";
-const TOGGLELOGINLOADING = "soc_network_auth_toggle_is_loading_login";
-const LOGIN_FAILED = "soc_network_auth_log_fail";
-const GET_CAPTCHA_URL_SUCCESS = "soc_network_auth_received_captcha_url";
-
-type DataType =
-{
-    userId: null | number,
-    email: null | string,
-    login: null | string,
-    isAuth: boolean,
-
-    login_failed: boolean | null,
-    captchaURL: null | string
-}
-
-type InitialStateType = {
-    data:DataType ,
-    isFetching: boolean
-}
-
-let initialState: InitialStateType = {
+let initialState= {
 
     data: {
-        userId: null,
-        email: null,
-        login: null,
+        userId: null as number |null,
+        email: null as string | null,
+        login: null as string |null,
         isAuth: false,
-        login_failed: null,
-        captchaURL: null // if null - captcha not required
+        login_failed: null as null | boolean,
+        captchaURL: null as string |null// if null - captcha not required
     }  ,
     isFetching: false
 }
 
+export type InitialStateType = typeof initialState;
 
 let authReducer = (state = initialState, action: ActionType): InitialStateType => {
 
     switch (action.type) {
-        case SETUSERSTATE: {
+        case "soc_network_auth_set_user_auth_state": {
 
             return {
                 ...state,
@@ -49,20 +30,20 @@ let authReducer = (state = initialState, action: ActionType): InitialStateType =
             }
         }
             ;
-        case TOGGLELOGINLOADING: {
+        case "soc_network_auth_toggle_is_loading_login": {
             return {
                 ...state,
                 isFetching: action.isFetching
             }
         }
-        case LOGIN_FAILED : {
+        case "soc_network_auth_log_fail" : {
             return {
                 ...state,
                 data: {...state.data, login_failed: action.login_failed}
             }
         }
             ;
-        case GET_CAPTCHA_URL_SUCCESS: {
+        case "soc_network_auth_received_captcha_url": {
             return {
                 ...state,
                 data: {...state.data, captchaURL: action.captchaURL}
@@ -73,49 +54,30 @@ let authReducer = (state = initialState, action: ActionType): InitialStateType =
             return state;
     }
 }
-type ActionType = SetAuthUserDataType | ToggleIsLoadingLoginType | ToggleFailedLoginType |SetCaptchaUrlType
-type SetAuthUserDataPayloadType = {
-    userId: number | null, email: string | null, login: string | null, isAuth: boolean, login_failed: boolean |null, captchaURL: string | null
-}
-type SetAuthUserDataType = {
-    type: typeof SETUSERSTATE,
-    payload: SetAuthUserDataPayloadType
-}
-
-const setAuthUserData = (userId: number | null, email: string | null, login: string | null, isAuth: boolean, login_failed: boolean |null, captchaURL: string|null): SetAuthUserDataType => ({
-    type: SETUSERSTATE,
-    payload: {userId, email, login, isAuth, login_failed, captchaURL}
-});
-type ToggleIsLoadingLoginType = {
-    type: typeof TOGGLELOGINLOADING,
-    isFetching: boolean
-}
-const toggleIsLoadingLogin = (isFetching: boolean): ToggleIsLoadingLoginType => ({type: TOGGLELOGINLOADING, isFetching});
-
-type ToggleFailedLoginType = {
-    type: typeof LOGIN_FAILED,
-    login_failed: boolean
+type ActionType = InferActionTypes<typeof actions>
+const actions = {
+    setAuthUserData:  (userId: number | null, email: string | null, login: string | null, isAuth: boolean, login_failed: boolean |null, captchaURL: string|null) => ({
+        type: "soc_network_auth_set_user_auth_state",
+        payload: {userId, email, login, isAuth, login_failed, captchaURL}
+    } as const),
+    toggleIsLoadingLogin:  (isFetching: boolean) => ({type: "soc_network_auth_toggle_is_loading_login", isFetching}as const),
+    toggle_failed_login:  (login_failed: boolean) => ({type: "soc_network_auth_log_fail", login_failed}as const),
+    setCaptchaURL:  (captchaURL: string) => ({type: "soc_network_auth_received_captcha_url", captchaURL}as const  )
 }
 
-const toggle_failed_login = (login_failed: boolean): ToggleFailedLoginType => ({type: LOGIN_FAILED, login_failed});
-
-type SetCaptchaUrlType = {
-    type: typeof GET_CAPTCHA_URL_SUCCESS,
-    captchaURL: string
-}
-const setCaptchaURL = (captchaURL: string): SetCaptchaUrlType => ({type: GET_CAPTCHA_URL_SUCCESS, captchaURL});
 
 // Check if signed in
-type ThunkType = ThunkAction<Promise<void>, AppStateType, any, ActionType>
+type ThunkType = ThunkAction<Promise<void>, AppStateType, any, ActionType>;
+
 export const singInProcessCheck = (): ThunkType => {
     return async (dispatch, getState) => {
-        dispatch(toggleIsLoadingLogin(true));
+        dispatch(actions.toggleIsLoadingLogin(true));
         let response = await authAPI.getLoginData()
-        dispatch(toggleIsLoadingLogin(false));
+        dispatch(actions.toggleIsLoadingLogin(false));
         if (response.resultCode === ResultCodesEnum.Success ) {
             let {id, email, login} = response.data;
             let captchaURL = null;
-            dispatch(setAuthUserData(id, email, login, true, false, captchaURL));
+            dispatch(actions.setAuthUserData(id, email, login, true, false, captchaURL));
         } else console.log("error no login")
     }
 
@@ -139,7 +101,7 @@ export const singInLogin = (values: ValuesType): ThunkType => {
             if (response.resultCode === ResultCodeForCaptcha.CaptchaError) {
                 dispatch(getCaptchaURL());
             }
-            dispatch(toggle_failed_login(true));
+            dispatch(actions.toggle_failed_login(true));
         }
     }
 };
@@ -148,7 +110,7 @@ export const singOutLogin = () : ThunkType=> {
     return async (dispatch , getState) => {
         let response = await loginAPI.signOutData();
         if (response.data.resultCode === ResultCodesEnum.Success) {
-            dispatch(setAuthUserData(null, null, null, false, null, null));
+            dispatch(actions.setAuthUserData(null, null, null, false, null, null));
         } else {
             console.log("no sign out")
         }
@@ -159,7 +121,7 @@ export const getCaptchaURL = (): ThunkType => {
     return async (dispatch ,getState) => {
         const response = await captchaAPI.getCaptchaUrl();
         const captchaUrl = response.data.url;
-        dispatch(setCaptchaURL(captchaUrl));
+        dispatch(actions.setCaptchaURL(captchaUrl));
     }
 }
 

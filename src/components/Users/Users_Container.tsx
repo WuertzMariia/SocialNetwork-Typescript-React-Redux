@@ -4,8 +4,6 @@ import {
     getUsers,
     subscribe,
     unsubscribe,
-    setCurrentPageUsers,
-    setTotalUsersCount,
     UsersShortType
 } from "../../redux/usersReducer";
 import Users from './Users';
@@ -33,9 +31,7 @@ type MapStateToPropsType = {
 type MapDispatchToPropsType = {
     getUsers: (currentPage: number, pageSize: number) => void,
     subscribe: (userId: number) => void,
-    unsubscribe: (userId: number) => void,
-    setCurrentPageUsers: (page: number) => void,
-    setTotalUsersCount: (totalCount: number) => void
+    unsubscribe: (userId: number) => void
 }
 type PropsType = MapStateToPropsType & MapDispatchToPropsType;
 
@@ -58,9 +54,7 @@ class UsersApiComponent extends React.Component<PropsType> {
             currentPage={this.props.currentPage} 
             subscribe={this.props.subscribe}
             unsubscribe={this.props.unsubscribe}
-            onBtnPageClick={this.onBtnPageClick} 
-            setCurrentPageUsers={this.props.setCurrentPageUsers}
-            setTotalUsersCount={this.props.setTotalUsersCount}
+            onBtnPageClick={this.onBtnPageClick}
             subscriptionProcessed={this.props.subscriptionProcessed}
             />}
             </div>
@@ -95,6 +89,5 @@ let mapStateToProps = (state: AppStateType) => {
 export default compose( connect(mapStateToProps, {
     getUsers,
     subscribe,
-    unsubscribe,
-    setCurrentPageUsers, setTotalUsersCount
+    unsubscribe
 }), withAuthRedirectComponent)(UsersApiComponent);

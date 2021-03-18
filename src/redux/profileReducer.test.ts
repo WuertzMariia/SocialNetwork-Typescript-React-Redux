@@ -1,10 +1,11 @@
 import React from 'react';
-import profileReducer, {actioncreatorAddPost, deletePost} from "./profileReducer";
+import profileReducer, {actions, UsersType} from "./profileReducer";
+import {AppStateType} from "./redux_store";
 
 
 it('new post should be added', () => {
     // 1. test data
-   let action = actioncreatorAddPost("new post");
+   let action = actions.actioncreatorAddPost("new post");
    let state = {
 
        posts: [
@@ -15,7 +16,10 @@ it('new post should be added', () => {
            { post: "i am fine", id:4 },
            { post: "i am fine", id:4 },
            { post: "i am fine", id:5 }
-       ]
+       ],
+       profile: null,
+       isFetching: false,
+       status: 'My dream is to become a good Frontend Developer'
    }
    // 2. action
     let newState = profileReducer(state, action);
@@ -25,7 +29,7 @@ it('new post should be added', () => {
 })
 
 it('to delete', () => {
-    let action = deletePost(1);
+    let action = actions.deletePost(1);
     let state = {
 
         posts: [
@@ -36,7 +40,10 @@ it('to delete', () => {
             { post: "i am fine", id:4 },
             { post: "i am fine", id:4 },
             { post: "i am fine", id:5 }
-        ]
+        ],
+        profile: null,
+        isFetching: false,
+        status: 'My dream is to become a good Frontend Developer'
     }
     let newState = profileReducer(state, action);
     expect(newState.posts.length).toBe(6);

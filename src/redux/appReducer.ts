@@ -1,37 +1,36 @@
 import {singInProcessCheck} from "./authReducer";
 import {ThunkAction} from "redux-thunk";
-import {AppStateType} from "./redux_store";
+import {AppStateType, InferActionTypes} from "./redux_store";
 
-const INITILIZATION_SUCCESFULL: string = "init_app";
 
-type InitialStateType = {
-    initialized: boolean
-}
-let initialState: InitialStateType = {
+let initialState = {
     initialized: false
 }
+type InitialStateType = typeof initialState;
 
-export let appReducer = (state = initialState, action: InitializationSuccessType): InitialStateType => {
+export let appReducer = (state = initialState, action: ActionType): InitialStateType => {
     switch (action.type) {
-        case INITILIZATION_SUCCESFULL: {
+        case 'sn/app/init_app': {
             return {
                 ...state,
-                initialized: true
+                initialized: true,
+
             }
         }
         default:
             return state;
     }
 }
-type InitializationSuccessType = {
-    type: typeof INITILIZATION_SUCCESFULL
+type ActionType = InferActionTypes<typeof actions>
+const actions = {
+    initial_status: () => ({type: 'sn/app/init_app'} as const)
 }
-const initial_status = () : InitializationSuccessType => ({type: INITILIZATION_SUCCESFULL});
-type ThunkType = ThunkAction<Promise<void>, AppStateType, any, InitializationSuccessType>
+
+type ThunkType = ThunkAction<Promise<void>, AppStateType, any, ActionType>
 export const initialization_App = ():ThunkType => {
 
     return async (dispatch) => {
         let response = await dispatch(singInProcessCheck());
-      dispatch(initial_status());
+      dispatch(actions.initial_status());
 
 }}

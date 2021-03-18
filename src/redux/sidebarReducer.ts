@@ -10,6 +10,7 @@ type InitialStateType = {
     sideb: Array<SidebarType>,
     friends: Array<FriendsType>
 }
+
 let initialState: InitialStateType = {
     sideb: [
         { path: "/profile", name: "Profile" },

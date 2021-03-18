@@ -13,9 +13,7 @@ totalUsersCount: number,
 currentPage: number,
 subscribe: (userId: number) => void,
 unsubscribe: (userId: number) => void,
-onBtnPageClick: (page: number) => void,
-setCurrentPageUsers: (page: number) => void,
-setTotalUsersCount: (totalCount: number) => void,
+onBtnPageClick: (page: number) => void
 subscriptionProcessed: Array<number>
 }
 
