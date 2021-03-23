@@ -4,6 +4,7 @@ import {connect} from "react-redux";
 import { compose } from 'redux';
 import { withAuthRedirectComponent } from '../Redirect/withAuthRedirectComponent';
 import {AppStateType} from "../../redux/redux_store";
+import React from "react";
 
 
 
@@ -14,7 +15,8 @@ messagesPage: state.messagesPage
 }
 
 
-   const Dialogs_Container= compose(connect(mapStateToProps, {}),withAuthRedirectComponent)(Dialogs)
+
+const Dialogs_Container= compose(connect(mapStateToProps, {}),withAuthRedirectComponent)(Dialogs) as React.ComponentType;
 
 // const Dialogs_Container = connect(mapStateToProps, mapDispatchToProps)(Dialogs); 
 

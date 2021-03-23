@@ -1,8 +1,7 @@
-
-import { ThunkAction } from "redux-thunk";
-import {ResultCodesEnum} from "../api/api";
-import {AppStateType, InferActionTypes} from "./redux_store";
-import {usersApi} from "../api/usersApi";
+import {ThunkAction} from 'redux-thunk';
+import {ResultCodesEnum} from '../api/api';
+import {AppStateType, InferActionTypes} from './redux_store';
+import {usersApi} from '../api/usersApi';
 
 type PhotosType = {
     small: string | null,
@@ -16,26 +15,33 @@ export type UsersShortType = {
     status: string | null,
     followed: boolean
 }
-type InitialStateType = {
+export type InitialStateTypeUsersReducer = {
     users: Array<UsersShortType>,
     pageSize: number,
     totalUsersCount: number,
     currentPage: number,
     isLoading: boolean,
-    subscriptionProcessed: Array<number>
+    subscriptionProcessed: Array<number>,
+    filter: {
+        term: string
+    }
+
 }
 
-let initialState: InitialStateType = {
+let initialState: InitialStateTypeUsersReducer = {
     users: [],
     pageSize: 5,
     totalUsersCount: 0, //before axios.get
     currentPage: 1,
     isLoading: false,
-    subscriptionProcessed: []
+    subscriptionProcessed: [],
+    filter: {
+        term: ""
+    }
 }
 
 
-let usersReducer = (state = initialState, action: ActionType): InitialStateType => {
+export let usersReducer = (state = initialState, action: ActionType): InitialStateTypeUsersReducer => {
     switch (action.type) {
         case 'FOLLOW': {
             return {
@@ -48,7 +54,7 @@ let usersReducer = (state = initialState, action: ActionType): InitialStateType 
                 })
             }
         }
-            ;
+
         case 'UNFOLLOW': {
             return {
                 ...state,
@@ -60,7 +66,7 @@ let usersReducer = (state = initialState, action: ActionType): InitialStateType 
                 })
             }
         }
-            ;
+
         case 'SETCURRENTPAGE':
             return {
                 ...state,
@@ -89,45 +95,55 @@ let usersReducer = (state = initialState, action: ActionType): InitialStateType 
                     [...state.subscriptionProcessed, action.id] :
                     [...state.subscriptionProcessed.filter(id => id !== action.id)]
             }
-        }
+        };
+        case 'SETSEARCHFILTER': {
+            return {
+                ...state,
+                filter: {...state.filter, term: action.filter}
+            }
+        };
         default:
             return state;
     }
 }
 
 type ActionType = InferActionTypes<typeof actions>;
-
-let actions = {
+export  let actions = {
     follow: (userId: number) => {
         return ({type: 'FOLLOW', userId} as const)
     },
-    unfollow: (userId: number) => ({type: 'UNFOLLOW', userId}as const),
-    setUsers: (users: Array<UsersShortType>) => ({type: 'SETUSERS', users}as const),
-    toggleIsLoading: (isloading: boolean) => ({type: 'TOGGLEISLOADING', isloading}as const),
+    unfollow: (userId: number) => ({type: 'UNFOLLOW', userId} as const),
+    setUsers: (users: Array<UsersShortType>) => ({type: 'SETUSERS', users} as const),
+    toggleIsLoading: (isloading: boolean) => ({type: 'TOGGLEISLOADING', isloading} as const),
     subscriptionIsBeingProcessed: (being_processed: boolean, id: number) => ({
         type: 'SUBSCRIPTIONPROCESSED',
         being_processed,
         id
-    }as const),
-    setCurrentPageUsers: (currentPage: number) => ({type: 'SETCURRENTPAGE', currentPage}as const),
-    setTotalUsersCount: (totalUsersCount: number) => ({type: 'SETTOTALPAGESCOUNT', totalUsersCount}as const)
+    } as const),
+    setCurrentPageUsers: (currentPage: number) => ({type: 'SETCURRENTPAGE', currentPage} as const),
+    setTotalUsersCount: (totalUsersCount: number) => ({type: 'SETTOTALPAGESCOUNT', totalUsersCount} as const),
+    setFilter: (filter: string)=> ({type: "SETSEARCHFILTER", filter} as const)
 }
 type ThunksType = ThunkAction<Promise<void>, AppStateType, unknown, ActionType>;
 
-export const getUsers = (currentPage: number, pageSize: number): ThunksType => {
+export const getUsers = (currentPage: number, pageSize: number, s: string): ThunksType => {
     return async (dispatch, getState) => {
 
         dispatch(actions.toggleIsLoading(true));
-        let response = await usersApi.getUsers(currentPage, pageSize)
+        debugger;
+        let response = await usersApi.getUsers(currentPage, pageSize, s)
         dispatch(actions.toggleIsLoading(false));
         dispatch(actions.setUsers(response.items));
+        let filter = s;
+        dispatch(actions.setFilter(filter));
+
         dispatch(actions.setCurrentPageUsers(currentPage));
         dispatch(actions.setTotalUsersCount(response.totalCount));
 
     }
 }
 
-export const unsubscribe = (userID: number) : ThunksType => {
+export const unsubscribe = (userID: number): ThunksType => {
     return async (dispatch) => {
         dispatch(actions.subscriptionIsBeingProcessed(true, userID));
         try {
@@ -136,26 +152,41 @@ export const unsubscribe = (userID: number) : ThunksType => {
                 dispatch(actions.unfollow(userID));
             }
         } catch (error) {
-            alert("error");
+            alert('error');
         }
         dispatch(actions.subscriptionIsBeingProcessed(false, userID));
     }
 }
 
-export const subscribe = (userID: number) : ThunksType => {
+export const subscribe = (userID: number): ThunksType => {
     return async (dispatch) => {
         dispatch(actions.subscriptionIsBeingProcessed(true, userID));
-        try {
+
             let response = await usersApi.getSubscription(userID)
             if (response === ResultCodesEnum.Success) {
 
                 dispatch(actions.follow(userID));
             }
-        } catch (error) {
-            alert("error");
-        }
         dispatch(actions.subscriptionIsBeingProcessed(false, userID));
     }
 }
+
+type ThunkTypeFriends = ThunkAction<any, AppStateType, any, ActionType>
+
+export const getAllUsersFriends = (currentPage: number, pageSize: number): ThunkTypeFriends => {
+    return async (dispatch) => {
+
+        dispatch(actions.toggleIsLoading(true));
+        let response = await usersApi.getAllUsersFriendsApi(currentPage, pageSize)
+        dispatch(actions.toggleIsLoading(false));
+        dispatch(actions.setUsers(response.items));
+        dispatch(actions.setCurrentPageUsers(currentPage));
+        dispatch(actions.setTotalUsersCount(response.totalCount));
+
+    }
+}
+
+
+
 
 export default usersReducer;

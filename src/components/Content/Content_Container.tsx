@@ -71,6 +71,5 @@ export default compose(connect(mapStateToProps, {
         updateUserStatus,
         getCurrentUserStatus
     }),
-    withRouter,
-    withAuthRedirectComponent)
-(Content_Container)
+    withRouter,withAuthRedirectComponent)
+(Content_Container) as React.ComponentType;

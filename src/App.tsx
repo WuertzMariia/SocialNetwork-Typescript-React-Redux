@@ -10,15 +10,18 @@ import Header_Container from "./components/Header/Header_Container";
 import Login from "./components/Login/Login";
 import {connect, Provider} from "react-redux";
 import {compose} from "redux";
-import {initialization_App} from "./redux/appReducer";
 import Preloader from "./components/Preloader/Preloader";
-import store from "./redux/redux_store";
+import store, {AppStateType} from "./redux/redux_store";
+import {initialization_App} from "./redux/appReducer";
+import UsersContainer from "./components/Users/Users_Container";
+import Dialogs_Container from "./components/Dialogs/Dialogs_Container";
 
 
-const Dialogs_Container = React.lazy(() => import("./components/Dialogs/Dialogs_Container"));
-const UsersApiComponent = React.lazy(() => import("./components/Users/Users_Container"));
-
-class App extends React.Component {
+type MapPropsType = ReturnType<typeof mapStateToProps>;
+type DispatchPropsType = {
+    initialization_App: () => void
+};
+class App extends React.Component<MapPropsType & DispatchPropsType> {
     componentDidMount = () => {
 
         this.props.initialization_App();
@@ -28,6 +31,7 @@ class App extends React.Component {
         if (!this.props.initialized_app) {
             return <Preloader/>
         }
+        let pathWithPage = this.props.currentPage
         return (
 
             <div className={c.App}>
@@ -39,7 +43,7 @@ class App extends React.Component {
                 <Route path="/profile/:userId?" render={() => <Content_Container/>}/>
                 <Route path="/news" render={() => <News/>}/>
                 <Route path="/music" render={() => <Music/>}/>
-                <Suspense fallback={<Preloader/>}><Route path="/users" render={() => <UsersApiComponent/>}/></Suspense>
+                <Suspense fallback={<Preloader/>}><Route path={'/users/:friends?/:'+pathWithPage+'?'} render={() => <UsersContainer/>}/></Suspense>
                 <Suspense fallback={<Preloader/>}><Route path="/messages"
                                                          render={() => <Dialogs_Container/>}/></Suspense>
                 <Route path="/login" render={() => <Login/>}/>
@@ -50,12 +54,14 @@ class App extends React.Component {
         );
     }
 }
-let mapStateToProps = (state) => ({
+let mapStateToProps = (state: AppStateType) => ({
     state: state,
-    initialized_app: state.appMain.initialized
+    initialized_app: state.appMain.initialized,
+    currentPage: state.usersPage.currentPage
 })
-let AppContainer = compose(withRouter, connect(mapStateToProps, {initialization_App}))(App);
-const SocialNetworkApp = (props) => {
+
+let AppContainer = compose<React.ComponentType>(withRouter, connect(mapStateToProps, {initialization_App}))(App);
+const SocialNetworkApp = () => {
     return <BrowserRouter>
         <Provider store={store}>
             <AppContainer/>

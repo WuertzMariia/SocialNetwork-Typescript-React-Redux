@@ -1,7 +1,8 @@
 .friendsblock {
   
   display:flex;
-  flex-direction: row; 
+  flex-direction: row;
+  flex-wrap: wrap;
   align-content: space-around;
   justify-content:left; 
    
@@ -15,4 +16,12 @@
 
 .friendsblock a {
   color: rosybrown;
+}
+
+.eachFriend {
+  display: flex;
+  flex-direction: column;
+  margin: 3px;
+  flex-grow: 1;
+  width: 35%;
 }
