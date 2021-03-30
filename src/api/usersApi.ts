@@ -1,5 +1,6 @@
 import {instance, OftenResponseType} from './api';
 import {profileAPI} from './profileApi';
+import axios from 'axios';
 
 export type ArrayOfUsers = {
     id: number,
@@ -18,8 +19,10 @@ type UsersGetResponseType = {
     error: string
 }
 export const usersApi = {
-    getUsers(currentPage: number, pageSize = 10, s="", friend: null | boolean = null) {
+    getUsers(currentPage: number, pageSize = 10, s="", friend: null | boolean) {
+
         return instance.get<UsersGetResponseType>(`users?page=${currentPage}&count=${pageSize}&term=${s}` + (friend === null ? "" : `&friend=${friend}`)).then(response => {
+           console.log(response.data);
             return response.data
         })
     },

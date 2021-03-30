@@ -70,6 +70,7 @@ export let usersReducer = (state = initialState, action: ActionType): InitialSta
         }
 
         case 'SETCURRENTPAGE':
+
             return {
                 ...state,
                 currentPage: action.currentPage
@@ -133,13 +134,15 @@ type ThunksType = ThunkAction<Promise<void>, AppStateType, unknown, ActionType>;
 export const getUsers = (currentPage: number, pageSize: number, filter: { term: string, friend: boolean | null }): ThunksType => {
     return async (dispatch, getState) => {
         dispatch(actions.toggleIsLoading(true));
+        dispatch(actions.setFilter(filter));
+        dispatch(actions.setCurrentPageUsers(currentPage));
         let response = await usersApi.getUsers(currentPage, pageSize, filter.term, filter.friend)
         dispatch(actions.toggleIsLoading(false));
         dispatch(actions.setUsers(response.items));
-        dispatch(actions.setFilter(filter));
 
-        dispatch(actions.setCurrentPageUsers(currentPage));
         dispatch(actions.setTotalUsersCount(response.totalCount));
+
+
 
     }
 }

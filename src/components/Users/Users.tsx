@@ -1,10 +1,10 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import s from './Users.module.css';
 import userPhoto from '../../assets/images/user.png';
 import {NavLink, useHistory} from 'react-router-dom';
 import Paginator from './Paginator';
 import {Field, Form, Formik, FormikHelpers} from 'formik';
-import {useDispatch, useSelector} from 'react-redux';
+import {shallowEqual, useDispatch, useSelector} from 'react-redux';
 import {
     filterSelector,
     requestPage,
@@ -21,54 +21,83 @@ type UsersComponentType = {
     match: any
 }
 
-const Users: React.FC<UsersComponentType> = (props) => {
+const Users: React.FC<UsersComponentType> = React.memo((props) => {
 
 
     const pageSize = useSelector(usersPageSize);
     const totalUsersCount = useSelector(totUsersCount);
-    const currentPage = useSelector(requestPage);
     const subscriptionProcessed = useSelector(subscriptionConfirm);
-    const filter = useSelector(filterSelector);
     const dispatch = useDispatch();
     const usersPageUsers = useSelector(requestUsers);
-const history = useHistory();
-//     useEffect(()=> {
-// history.push({
-//     pathname: '/users',
-//     search: `?term=${filter.term}&friend=${filter.friend}&page=${currentPage}`
-// })
-//     }, [filter, currentPage]);
-
-    useEffect(()=> {
-        const {search} = history.location;
-        const parsed = queryString.parse(search.substr(1));
-        console.log(parsed);
-    })
-
-    let useDeepEf = () => {
-        const isFirst = useRef(true);
+    const history = useHistory();
         const prevDev = useRef(usersPageUsers);
-
+        let currentPage = useSelector(requestPage);
+        let filter = useSelector(filterSelector);
         useEffect(() => {
-            const isSame = prevDev.current.every((obj, index) => isEqual(obj, usersPageUsers[index]));
-            if (!isSame || usersPageUsers.length===0) {
-                if (props.match.params.friends) {
-                            dispatch(getAllUsersFriends(currentPage, pageSize));
-                        } else {
-                       dispatch(getUsers(currentPage, pageSize, filter));
-                        }
+
+
+            let actualPage= currentPage;
+            let actualFilter= filter;
+            const {search} = history.location;
+            const parsed= queryString.parse(search.substr(1)) as {
+                term: string,
+                page: string,
+                friend: string
+            };
+            if(!!parsed.page){actualPage = +parsed.page};
+            if(!!parsed.term) {
+                actualFilter = {...actualFilter, term: parsed.term as string};
+
             }
-            isFirst.current = false;
+            if(!!parsed.friend) {
+                actualFilter = {...actualFilter, friend: parsed.friend === "null" ? null : parsed.friend === "true" ? true:  false};
+
+            }
+
+            const isSame = prevDev.current.every((obj, index) => isEqual(obj, usersPageUsers[index]));
+            if (!isSame || usersPageUsers.length === 0) {
+                if (props.match.params.friends) {
+                    dispatch(getAllUsersFriends(actualPage, pageSize));
+                } else {
+                    dispatch(getUsers(actualPage, pageSize, actualFilter));
+                }
+            }
+            history.push({
+                pathname: '/users',
+                search: `?term=${actualFilter.term}&friend=${actualFilter.friend}&page=${String(actualPage)}`
+            })
             prevDev.current = usersPageUsers;
         }, [])
-    }
-useDeepEf();
 
-    const onBtnPageClick = (p: number) => {
+//     const useDidMountEffect = () => {
+//             const didMount = useRef(false);
+//             useEffect(()=> {
+//                 if(didMount.current) {
+//                     history.push({
+//                         pathname: '/users',
+//                         search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
+//                     })
+//                 } else {
+//                     didMount.current = true;
+//                 }
+//                 return () => {
+//                     didMount.current = false;
+//
+//                 }
+//             }, [filter, currentPage]);
+//
+//     }
+// useDidMountEffect();
+
+        const onBtnPageClick = (p: number) => {
         if (props.match.params.friends) {
             dispatch(getAllUsersFriends(p, pageSize));
         } else {
             dispatch(getUsers(p, pageSize, filter));
+            history.push({
+                pathname: '/users',
+                search: `?term=${filter.term}&friend=${filter.friend}&page=${String(p)}`
+            })
         }
 
     }
@@ -78,6 +107,10 @@ useDeepEf();
         friend: null | boolean
     }) => {
         dispatch(getUsers(1, pageSize, s));
+        history.push({
+            pathname: '/users',
+            search: `?term=${s.term}&friend=${s.friend}&page=${String(1)}`
+        })
     }
     const follow = (userId: number) => {
         dispatch(subscribe(userId));
@@ -139,11 +172,14 @@ useDeepEf();
         </div>
     )
 }
+)
+const UsersSearchForm = React.memo((props: { onSearchBtnClick: (s: { term: string; friend: boolean | null }) => void }) => {
 
-const UsersSearchForm = (props: { onSearchBtnClick: (s: { term: string; friend: boolean | null }) => void }) => {
+    let filter=useSelector(filterSelector);
+
     interface Values {
         term: string,
-        friend: string
+        friend: "true" | "false" | "null"
 
     }
 
@@ -156,34 +192,35 @@ const UsersSearchForm = (props: { onSearchBtnClick: (s: { term: string; friend: 
             friend: null | boolean
         } = {
             term: values.term,
-            friend: values.friend === 'all' ? null : values.friend === 'friends' ? true : false
+            friend: values.friend === 'null' ? null : values.friend === 'true' ? true : false
         }
         props.onSearchBtnClick(filter);
 
     }
     return <div>
         <Formik
+            enableReinitialize={true}
             initialValues={{
-                term: '',
-                friend: 'all'
+                term: filter.term,
+                friend: String(filter.friend) as "true" | "false" | "null"
             }}
             onSubmit={submitFunc}
         >
             <Form>
                 <div className={s.formStyle}>
                     <label htmlFor="searchField">Find new friends</label>
-                    <Field id="searchField" name="term" placeholder=""/>
+                    <Field id="searchField" name="term" type="text" placeholder=""/>
                     <Field as="select" name="friend">
-                        <option value="all">All Users</option>
-                        <option value="friends">Friends</option>
-                        <option value="notFriends">Not Friends</option>
+                        <option value="null">All Users</option>
+                        <option value="true">Friends</option>
+                        <option value="false">Not Friends</option>
                     </Field>
                     <button type="submit">Search</button>
                 </div>
             </Form>
         </Formik>
     </div>
-}
+})
 
 
 export default Users; 
