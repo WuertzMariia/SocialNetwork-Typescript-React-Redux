@@ -23,7 +23,8 @@ export type InitialStateTypeUsersReducer = {
     isLoading: boolean,
     subscriptionProcessed: Array<number>,
     filter: {
-        term: string
+        term: string,
+        friend: null | boolean
     }
 
 }
@@ -36,7 +37,8 @@ let initialState: InitialStateTypeUsersReducer = {
     isLoading: false,
     subscriptionProcessed: [],
     filter: {
-        term: ""
+        term: '',
+        friend: null as null | boolean
     }
 }
 
@@ -95,20 +97,22 @@ export let usersReducer = (state = initialState, action: ActionType): InitialSta
                     [...state.subscriptionProcessed, action.id] :
                     [...state.subscriptionProcessed.filter(id => id !== action.id)]
             }
-        };
+        }
+
         case 'SETSEARCHFILTER': {
             return {
                 ...state,
-                filter: {...state.filter, term: action.filter}
+                filter: {...state.filter, term: action.filter.term, friend: action.filter.friend}
             }
-        };
+        }
+
         default:
             return state;
     }
 }
 
 type ActionType = InferActionTypes<typeof actions>;
-export  let actions = {
+export let actions = {
     follow: (userId: number) => {
         return ({type: 'FOLLOW', userId} as const)
     },
@@ -122,19 +126,16 @@ export  let actions = {
     } as const),
     setCurrentPageUsers: (currentPage: number) => ({type: 'SETCURRENTPAGE', currentPage} as const),
     setTotalUsersCount: (totalUsersCount: number) => ({type: 'SETTOTALPAGESCOUNT', totalUsersCount} as const),
-    setFilter: (filter: string)=> ({type: "SETSEARCHFILTER", filter} as const)
+    setFilter: (filter: { term: string, friend: boolean | null }) => ({type: 'SETSEARCHFILTER', filter} as const)
 }
 type ThunksType = ThunkAction<Promise<void>, AppStateType, unknown, ActionType>;
 
-export const getUsers = (currentPage: number, pageSize: number, s: string): ThunksType => {
+export const getUsers = (currentPage: number, pageSize: number, filter: { term: string, friend: boolean | null }): ThunksType => {
     return async (dispatch, getState) => {
-
         dispatch(actions.toggleIsLoading(true));
-        debugger;
-        let response = await usersApi.getUsers(currentPage, pageSize, s)
+        let response = await usersApi.getUsers(currentPage, pageSize, filter.term, filter.friend)
         dispatch(actions.toggleIsLoading(false));
         dispatch(actions.setUsers(response.items));
-        let filter = s;
         dispatch(actions.setFilter(filter));
 
         dispatch(actions.setCurrentPageUsers(currentPage));
@@ -162,11 +163,11 @@ export const subscribe = (userID: number): ThunksType => {
     return async (dispatch) => {
         dispatch(actions.subscriptionIsBeingProcessed(true, userID));
 
-            let response = await usersApi.getSubscription(userID)
-            if (response === ResultCodesEnum.Success) {
+        let response = await usersApi.getSubscription(userID)
+        if (response === ResultCodesEnum.Success) {
 
-                dispatch(actions.follow(userID));
-            }
+            dispatch(actions.follow(userID));
+        }
         dispatch(actions.subscriptionIsBeingProcessed(false, userID));
     }
 }
@@ -185,8 +186,6 @@ export const getAllUsersFriends = (currentPage: number, pageSize: number): Thunk
 
     }
 }
-
-
 
 
 export default usersReducer;

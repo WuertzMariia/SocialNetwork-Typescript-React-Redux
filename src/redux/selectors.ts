@@ -24,3 +24,7 @@ export const pageLoading = (state: AppStateType) => {
 export const subscriptionConfirm = (state: AppStateType) => {
     return state.usersPage.subscriptionProcessed;
 }
+
+ export const filterSelector = (state: AppStateType) => {
+    return state.usersPage.filter
+ }

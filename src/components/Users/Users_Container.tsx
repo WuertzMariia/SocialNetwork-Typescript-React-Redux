@@ -1,113 +1,89 @@
 import React from 'react';
-
-import {
-    getAllUsersFriends,
-    getUsers,
-    subscribe,
-    unsubscribe,
-    UsersShortType
-} from '../../redux/usersReducer';
 import Users from './Users';
 import Preloader from '../Preloader/Preloader';
-import {compose} from 'redux';
-import {withAuthRedirectComponent} from '../Redirect/withAuthRedirectComponent';
-import {
-    pageLoading,
-    requestPage,
-    requestUsers,
-    subscriptionConfirm,
-    totUsersCount,
-    usersPageSize,
-} from '../../redux/selectors';
-import {connect} from 'react-redux';
-import {AppStateType} from '../../redux/redux_store';
+import {pageLoading,} from '../../redux/selectors';
+import {useSelector} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 
-type MapStateToPropsType = {
-    isLoading: boolean,
-    pageSize: number,
-    currentPage: number,
-    usersPageUsers: Array<UsersShortType>,
-    totalUsersCount: number,
-    subscriptionProcessed: Array<number>,
-    friends: Array<UsersShortType>
+type UsersPageType = {
     match: any,
-    filter: string
-}
-type MapDispatchToPropsType = {
-    getUsers: (currentPage: number, pageSize: number,filter: string ) => void,
-    subscribe: (userId: number) => void,
-    unsubscribe: (userId: number) => void,
-    getAllUsersFriends: (currentPage: number, pageSize: number) => void,
-    dataInitialization: () => void
 }
 
-class UsersApiComponent extends React.Component<MapStateToPropsType & MapDispatchToPropsType> {
-    refreshPage() {
-        let friends = this.props.match.params.friends;
-        if (friends === 'friends') {
-            this.props.getAllUsersFriends(this.props.currentPage, this.props.pageSize);
-        } else {
-            this.props.getUsers(this.props.currentPage, this.props.pageSize,this.props.filter);
-        }
-    }
-
-    componentDidMount() {
-        this.refreshPage();
-    }
-
-    componentDidUpdate(prevProps: any, prevState: any, snapshot: any) {
-        if (prevProps.match.params.friends != this.props.match.params.friends) {
-            this.refreshPage();
-        }
-    }
-
-    onBtnPageClick = (p: number) => {
-        if(this.props.match.params.friends) {
-            this.props.getAllUsersFriends(p, this.props.pageSize);
-        } else {
-            this.props.getUsers(p, this.props.pageSize, this.props.filter);
-        }
-
-    }
-
-    onSearchBtnClick = (s: string) => {
-        this.props.getUsers(1, this.props.pageSize, s);
-    }
-
-    render() {
-
-        return <>
-            <div>{this.props.isLoading ? <Preloader/> :
-                <Users
-                    usersPageUsers={this.props.usersPageUsers}
-                    pageSize={this.props.pageSize}
-                    totalUsersCount={this.props.totalUsersCount}
-                    currentPage={this.props.currentPage}
-                    subscribe={this.props.subscribe}
-                    unsubscribe={this.props.unsubscribe}
-                    onBtnPageClick={this.onBtnPageClick}
-                    subscriptionProcessed={this.props.subscriptionProcessed}
-                    onSearchBtnClick={this.onSearchBtnClick}
-
-                />}
-            </div>
-        </>
-    }
+const UsersPage: React.FC<UsersPageType> = (props) => {
+    const isLoading = useSelector(pageLoading);
+    return (<div>{isLoading ? <Preloader/> :
+        <Users
+            {...props}
+        />}
+    </div>)
 }
 
-let mapStateToProps = (state: AppStateType) => {
-    return {
-        usersPageUsers: requestUsers(state),
-        pageSize: usersPageSize(state),
-        totalUsersCount: totUsersCount(state),
-        currentPage: requestPage(state),
-        isLoading: pageLoading(state),
-        subscriptionProcessed: subscriptionConfirm(state),
-        friends: state.sidebarPage.friends,
-        filter: state.usersPage.filter.term
-    }
-}
+let UsersContainer = withRouter(UsersPage);
+export default UsersContainer;
+
+// OLD CLASS COMP CONTAINER
+// type MapStateToPropsType = {
+//     isLoading: boolean,
+//     pageSize: number,
+//     currentPage: number,
+//     match: any,
+//     filter: { term: string, friend: boolean | null }
+// }
+// type MapDispatchToPropsType = {
+//     getUsers: (currentPage: number, pageSize: number, filter: { term: string, friend: boolean | null }) => void,
+//     subscribe: (userId: number) => void,
+//     unsubscribe: (userId: number) => void,
+//     getAllUsersFriends: (currentPage: number, pageSize: number) => void,
+//     dataInitialization: () => void
+// }
+// class UsersApiComponent extends React.Component<MapStateToPropsType & MapDispatchToPropsType> {
+//     refreshPage() {
+//         let friends = this.props.match.params.friends;
+//         if (friends === 'friends') {
+//             let filter = {
+//                 term: this.props.filter.term,
+//                 friend: true
+//             }
+//             this.props.getUsers(this.props.currentPage, this.props.pageSize, this.props.filter)
+//         } else {
+//             this.props.getUsers(this.props.currentPage, this.props.pageSize, this.props.filter);
+//         }
+//     }
+//
+//     componentDidMount() {
+//         this.refreshPage();
+//     }
+//
+//     componentDidUpdate(prevProps: any, prevState: any, snapshot: any) {
+//         if (prevProps.match.params.friends != this.props.match.params.friends) {
+//             this.refreshPage();
+//         }
+//     }
+//
+//
+//
+//     render() {
+//
+//         return <>
+//             <div>{this.props.isLoading ? <Preloader/> :
+//                 <Users
+//                     // subscribe={this.props.subscribe}
+//                     // unsubscribe={this.props.unsubscribe}
+//                     {...this.props}
+//                 />}
+//             </div>
+//         </>
+//     }
+// }
+
+// let mapStateToProps = (state: AppStateType) => {
+//     return {
+//         pageSize: usersPageSize(state),
+//         currentPage: requestPage(state),
+//         isLoading: pageLoading(state),
+//         filter: filterSelector(state)
+//     }
+// }
 // let mapDispatchToProps = (dispatch) => {
 //     return {
 //         follow: (userID) => { dispatch(followAC(userID)); },
@@ -121,11 +97,11 @@ let mapStateToProps = (state: AppStateType) => {
 
 
 // @ts-ignore
-let UsersContainer = compose(connect(mapStateToProps, {
-    getUsers,
-    subscribe,
-    unsubscribe,
-    getAllUsersFriends
-}), withRouter, withAuthRedirectComponent)(UsersApiComponent) as React.ComponentType;
+// let UsersContainer = compose(connect(mapStateToProps, {
+//     getUsers,
+//     subscribe,
+//     unsubscribe,
+//     getAllUsersFriends
+// }), withRouter, withAuthRedirectComponent)(UsersApiComponent) as React.ComponentType;
 
-export default UsersContainer;
+
