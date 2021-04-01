@@ -30,7 +30,7 @@
     font-weight: 300;
     font-size: 26px;
     text-transform: uppercase;
-    text-align: center; 
+    text-align: center;
 }
 .form_inner h3:after {
     content: "";
@@ -39,14 +39,14 @@
     bottom: -6px;
     height: 2px;
     width: 60px;
-  
-}
-span {
-    color: rgb(243, 49, 49); 
-    position: absolute;
-    margin-left: 120px; 
 
 }
+/*span {*/
+/*    color: rgb(243, 49, 49);*/
+/*    position: absolute;*/
+/*    margin-left: 120px;*/
+
+/*}*/
 
 .captcha {
     width: 150px;
@@ -122,7 +122,7 @@ span {
 .form_control
 .error
 .input {
-border: red 2px solid; 
+border: red 2px solid;
 }
 
 .failed_sing_in {

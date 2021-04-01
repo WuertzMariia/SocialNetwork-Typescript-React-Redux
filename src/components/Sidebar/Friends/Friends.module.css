@@ -1,27 +1,35 @@
 .friendsblock {
-  
+
   display:flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-content: space-around;
-  justify-content:left; 
-   
+  justify-content:left;
+
 }
 
 .imageClass {
-  border-radius: 50%;
-  max-width: 35px; 
+  border-radius: 10%;
+  max-width: 55px;
   min-width: 35px;
+  margin: 8px;
 }
 
-.friendsblock a {
-  color: rosybrown;
-}
+/*.friendsblock a {*/
+/*  color: rosybrown;*/
+/*}*/
 
 .eachFriend {
   display: flex;
   flex-direction: column;
-  margin: 3px;
+  margin: 10px;
   flex-grow: 1;
-  width: 35%;
+
+  height: 60px;
+  padding: 5px;
 }
+
+/*.nameOfFriend {*/
+/*display: flex;*/
+/*  flex-wrap: wrap;*/
+/*}*/

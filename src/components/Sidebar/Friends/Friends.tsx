@@ -25,11 +25,11 @@ type DispatchPropsType = {
 const Friends: React.FC<FriendsPropsType & FriendsExtraType> = (props) => {
 
     let friendsdata = props.friends.map(f => <div className={s.eachFriend}>
-        {f.photos.small === null ? <img className={s.imageClass}
+        <div>{f.photos.small === null ? <img className={s.imageClass}
                                         src={'https://trikky.ru/wp-content/blogs.dir/1/files/2020/03/29/avatarka.jpg'}></img> :
             <img className={s.imageClass} src={f.photos.small}>
-            </img>}
-        <NavLink to={'/profile/' + f.id}>{f.name}</NavLink>
+            </img>}</div>
+        <div className={s.nameOfFriend}><NavLink to={'/profile/' + f.id}>{f.name}</NavLink></div>
     </div>)
 let pth = "friends";
     return <div className={c.sidebar_friends}>

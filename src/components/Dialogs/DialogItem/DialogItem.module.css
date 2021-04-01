@@ -12,6 +12,10 @@ padding: 10px;
 
 
 .item {
-    
+
     min-width: 80px; 
 }
+ img {
+     max-width: 80px;
+     width: 50px;
+ }

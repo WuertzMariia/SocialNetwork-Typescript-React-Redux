@@ -10,6 +10,13 @@ type SideBarPropsType = {
 }
 
 const Menu: React.FC<SideBarPropsType> = (props) => {
+    let obj = [{ path: "/profile", name: "Profile" },
+    { path: "/messages", name: "Messages" },
+    { path: "/news", name: "News" },
+    { path: "/music", name: "Music" },
+    { path: "/settings", name: "Settings" },
+    { path: "/users", name: "Find more friends" }]
+
     let sidebardata = props.sidebar.map((s:SidebarType) => <div className={c.item}><NavLink to={s.path} activeClassName={c.activeLink}>{s.name}</NavLink></div> );
     return (<div className={c.sidebar}>
         {sidebardata}

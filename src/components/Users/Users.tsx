@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import s from './Users.module.css';
 import userPhoto from '../../assets/images/user.png';
 import {NavLink, useHistory} from 'react-router-dom';
 import Paginator from './Paginator';
 import {Field, Form, Formik, FormikHelpers} from 'formik';
-import {shallowEqual, useDispatch, useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
     filterSelector,
     requestPage,
@@ -21,7 +21,7 @@ type UsersComponentType = {
     match: any
 }
 
-const Users: React.FC<UsersComponentType> = React.memo((props) => {
+const Users: React.FC<UsersComponentType> = (props) => {
 
 
     const pageSize = useSelector(usersPageSize);
@@ -62,32 +62,38 @@ const Users: React.FC<UsersComponentType> = React.memo((props) => {
                     dispatch(getUsers(actualPage, pageSize, actualFilter));
                 }
             }
-            history.push({
-                pathname: '/users',
-                search: `?term=${actualFilter.term}&friend=${actualFilter.friend}&page=${String(actualPage)}`
-            })
+
+            // history.push({
+            //     pathname: '/users',
+            //     search: `?term=${actualFilter.term}&friend=${actualFilter.friend}&page=${String(actualPage)}`
+            // })
             prevDev.current = usersPageUsers;
         }, [])
+// useEffect(()=> {
+//     history.push({
+//         pathname: '/users',
+//         search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
+//     })
+// }, [filter, currentPage]);
+    const useDidMountEffect = () => {
+            const didMount = useRef(false);
+            useEffect(()=> {
+                if(didMount.current) {
+                    history.push({
+                        pathname: '/users',
+                        search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
+                    })
+                } else {
+                    didMount.current = true;
+                }
+                return () => {
+                    didMount.current = false;
 
-//     const useDidMountEffect = () => {
-//             const didMount = useRef(false);
-//             useEffect(()=> {
-//                 if(didMount.current) {
-//                     history.push({
-//                         pathname: '/users',
-//                         search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
-//                     })
-//                 } else {
-//                     didMount.current = true;
-//                 }
-//                 return () => {
-//                     didMount.current = false;
-//
-//                 }
-//             }, [filter, currentPage]);
-//
-//     }
-// useDidMountEffect();
+                }
+            }, [filter, currentPage]);
+
+    }
+    useDidMountEffect();
 
         const onBtnPageClick = (p: number) => {
         if (props.match.params.friends) {
@@ -172,7 +178,7 @@ const Users: React.FC<UsersComponentType> = React.memo((props) => {
         </div>
     )
 }
-)
+
 const UsersSearchForm = React.memo((props: { onSearchBtnClick: (s: { term: string; friend: boolean | null }) => void }) => {
 
     let filter=useSelector(filterSelector);

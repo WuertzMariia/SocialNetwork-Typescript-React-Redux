@@ -9,7 +9,7 @@ const Post: React.FC<PropsType> = (props) => {
             <div className={c.post}>
                 {props.message}
             </div>
-        <span>Like</span>
+        <p>Like</p>
     </div>
 }
 
