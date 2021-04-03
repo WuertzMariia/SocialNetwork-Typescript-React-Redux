@@ -3,6 +3,7 @@ import {connect} from "react-redux";
 import { Form, Field } from 'react-final-form'
 import {sendMessage} from "../../redux/dialogsReducer";
 import {AppStateType} from "../../redux/redux_store";
+import {Button, Input} from 'antd';
 
 type PropsDialogFormType = {
     onButtonsSend: (message: string) => void
@@ -28,15 +29,15 @@ const DialogForm: React.FC<PropsDialogFormType> = (props) => {
                         {({ input, meta }) => (
                             <div>
                                 <label></label>
-                                <input {...input} type="text" placeholder="your message" />
+                                <Input {...input} type="text" placeholder="your message" />
                                 {meta.error && meta.touched && <span>{meta.error}</span>}
                             </div>
                         )}
                     </Field >
                     </label> 
-                        <button type="submit" disabled={submitting || pristine}>
+                        <Button type={"primary"} onClick={handleSubmit} disabled={submitting || pristine}>
               Send
-            </button>
+            </Button>
 
                     
                 </form>

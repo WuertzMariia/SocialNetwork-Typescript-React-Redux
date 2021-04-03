@@ -110,7 +110,7 @@ export const singOutLogin = () : ThunkType=> {
     return async (dispatch , getState) => {
         let response = await loginAPI.signOutData();
         if (response.data.resultCode === ResultCodesEnum.Success) {
-            dispatch(actions.setAuthUserData(null, null, null, false, null, null));
+            dispatch(actions.setAuthUserData(null, null, null, false, false, null));
         } else {
             console.log("no sign out")
         }

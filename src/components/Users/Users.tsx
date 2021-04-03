@@ -16,6 +16,7 @@ import {
 import isEqual from 'lodash-es/isEqual';
 import {getAllUsersFriends, getUsers, subscribe, unsubscribe} from '../../redux/usersReducer';
 import * as queryString from 'querystring';
+import {Button} from 'antd';
 
 type UsersComponentType = {
     match: any
@@ -133,19 +134,19 @@ const Users: React.FC<UsersComponentType> = (props) => {
                 <div className={s.logo}>
                     <div>
                         <NavLink to={'/profile/' + u.id}>
-                            <img alt="users avatar" className={s.img_class}
+                            <img style={{maxWidth: "50px"}} alt="users avatar" className={s.img_class}
                                  src={u.photos.small != null ? u.photos.small : userPhoto}></img>
                         </NavLink>
                     </div>
                     {u.followed ?
-                        <button disabled={subscriptionProcessed.some(id => id === u.id)}
+                        <Button disabled={subscriptionProcessed.some(id => id === u.id)}
                                 className={s.btn_foll} onClick={() => {
                             unfollow(u.id);
-                        }} type="button">Unfollow</button> :
-                        <button disabled={subscriptionProcessed.some(id => id === u.id)}
+                        }} type={"default"}>Unfollow</Button> :
+                        <Button disabled={subscriptionProcessed.some(id => id === u.id)}
                                 className={s.btn_foll} onClick={() => {
                             follow(u.id);
-                        }} type="button">Follow</button>}
+                        }} type={"default"}>Follow</Button>}
                 </div>
                 <div>
                     <NavLink className={s.link_style}

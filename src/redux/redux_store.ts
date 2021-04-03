@@ -1,20 +1,22 @@
-import {applyMiddleware, combineReducers, compose, createStore} from "redux";
-import authReducer from "./authReducer";
-import dialogsReducer from "./dialogsReducer";
-import profileReducer from "./profileReducer";
-import sidebarReducer from "./sidebarReducer";
-import usersReducer from "./usersReducer";
+import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
+import authReducer from './authReducer';
+import dialogsReducer from './dialogsReducer';
+import profileReducer from './profileReducer';
+import sidebarReducer from './sidebarReducer';
+import usersReducer from './usersReducer';
 import thunkMiddleware from 'redux-thunk';
-import {appReducer} from "./appReducer";
+import {appReducer} from './appReducer';
+import chatReducer from './chatReducer';
 
 let reducers = combineReducers(
     {
         profilePage: profileReducer,
         messagesPage: dialogsReducer,
-        sidebarPage : sidebarReducer,
+        sidebarPage: sidebarReducer,
         usersPage: usersReducer,
         auth: authReducer,
-        appMain: appReducer
+        appMain: appReducer,
+            chat: chatReducer
     }
 )
 
@@ -25,7 +27,7 @@ export type AppStateType = ReturnType<ReducersType>;
 // export type InferActionTypes<T extends {[key: string]: (...args: any[])=>any}> = ReturnType<PropertiesType<T>>;
 
 
-export type InferActionTypes<T> = T extends {[key: string]: (...args: any[])=> infer U} ? U : never;
+export type InferActionTypes<T> = T extends { [key: string]: (...args: any[]) => infer U } ? U : never;
 // @ts-ignore
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducers, composeEnhancers(applyMiddleware(thunkMiddleware)));

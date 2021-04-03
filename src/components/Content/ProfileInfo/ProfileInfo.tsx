@@ -6,7 +6,8 @@ import userPhoto from "../../../assets/images/user.png";
 import {ProfileForm} from "./ProfileInfoForm";
 
 import {UsersType} from "../../../redux/profileReducer";
-
+import {Button, Input, message, Upload} from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 type PropsTypeContentInfo = {
     userIdA: number,
     setProfileData: (values: UsersType)=> void,
@@ -16,7 +17,22 @@ type PropsTypeContentInfo = {
     status:string | null,
     updateUserStatus: (status: string) => void
 }
+
+
 const ProfileInfo: React.FC<PropsTypeContentInfo> = (props) => {
+    // const uploadFoto = (file:any) => {
+    //
+    //     props.savePhotoC(file);
+    //     // if (e.target.files.length) {
+    //     //
+    //     // }
+    // }
+
+    const uploadFoto = (e: any) => {
+        if (e.target.files.length) {
+            props.savePhotoC(e.target.files[0]);
+        }
+    }
 
     let [editMode, setEditMode] = useState(false);
 
@@ -28,11 +44,7 @@ const ProfileInfo: React.FC<PropsTypeContentInfo> = (props) => {
         props.setProfileData(values);
     }
 
-    const uploadFoto = (e: any) => {
-        if (e.target.files.length) {
-            props.savePhotoC(e.target.files[0]);
-        }
-    }
+
 
     if (!props.profile) {
         return <Preloader/>
@@ -45,7 +57,7 @@ const ProfileInfo: React.FC<PropsTypeContentInfo> = (props) => {
                   src={props.profile.photos.small || userPhoto}/></div>
         {props.isOwner &&
         <div><label htmlFor={"file"}><p className={c.btn}>Upload new photo</p></label>
-            <input type={"file"} id={"file"} name={"file"} onChange={uploadFoto}/></div>}
+            <input  type={"file"} id={"file"} name={"file"} onChange={uploadFoto}/></div>}
 
         {!editMode ? <ProfileOfMainUser activEditMode={activEditMode} isOwner={props.isOwner}
                                         profile={props.profile}/>
@@ -56,6 +68,8 @@ const ProfileInfo: React.FC<PropsTypeContentInfo> = (props) => {
 }
 
 export default ProfileInfo;
+
+
 
 type ProfileMainUserType = {
     activEditMode: ()=> void,
@@ -86,7 +100,7 @@ const ProfileOfMainUser: React.FC<ProfileMainUserType> = (props) => {
                     <li>Website: {props.profile.contacts.website}</li>
                     <li>Youtube: {props.profile.contacts.youtube}</li>
                 </ul>
-                {props.isOwner && <button onClick={props.activEditMode}>edit</button>}
+                {props.isOwner && <Button type={"primary"} onClick={props.activEditMode}>edit</Button>}
             </div>
         </div>
     )

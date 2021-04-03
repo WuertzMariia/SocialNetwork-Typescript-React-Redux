@@ -1,13 +1,13 @@
 
 
 .imgClass {
-    width: 30%; 
+    width: 30%;
 }
 
 .main {
     display: flex;
-    flex-direction: column; 
-    position: relative; 
+    flex-direction: column;
+    position: relative;
 }
 
 ul{

@@ -71,7 +71,7 @@ button {
 }
 .logo > img{
     padding-right: 25px;
-
+max-height: 20px;
 }
 
 .country_city {

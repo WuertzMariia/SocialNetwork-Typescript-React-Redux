@@ -4,6 +4,7 @@ import {Field, Form} from "react-final-form";
 import React from "react";
 import s from './ProfileInfoForm.module.css';
 import {UsersType} from "../../../redux/profileReducer";
+import {Button} from 'antd';
 
 type ProfileFormValuesType = {
     aboutMe: string
@@ -78,16 +79,16 @@ export const ProfileForm: React.FC<ProfileFormType> = (props) => {
 
                         </div>
                         <div className="buttons">
-                            <button type="submit" disabled={submitting || pristine}>
+                            <Button type="primary" onClick={handleSubmit} disabled={submitting || pristine}>
                                 Submit
-                            </button>
-                            <button
-                                type="button"
+                            </Button>
+                            <Button
+                                type="primary"
                                 // onClick={form.reset}
                                 disabled={submitting || pristine}
                             >
                                 Reset
-                            </button>
+                            </Button>
                         </div>
 
                     </form>

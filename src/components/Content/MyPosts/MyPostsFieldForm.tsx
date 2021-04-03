@@ -3,6 +3,7 @@ import {Form, Field} from 'react-final-form';
 
 import {addNewPost, PostType} from "../../../redux/profileReducer";
 import {connect} from "react-redux";
+import {Button, Input} from 'antd';
 
 type MyPostFieldFormType = {
     onSubmitForm: (values:string ) => void
@@ -39,12 +40,12 @@ const MyPostsFieldForm: React.FC<MyPostFieldFormType> = (props) => {
                             {({input, meta}) => (
                                 <div>
                                     <label></label>
-                                    <input {...input} type="text" placeholder="Your new post"/>
+                                    <Input {...input} type="text" placeholder="Your new post"/>
                                     {/* {meta.error && meta.touched && <span>{meta.error}</span>} */}
                                 </div>
                             )}
                         </Field>
-                        <input name={"submit"} type={"submit"} value={"Send"}/>
+                        <Button  name={"submit"} type={'primary'} onClick={handleSubmit} value={"Send"}>Send</Button>
                     </div>
                 </form>
             )}
