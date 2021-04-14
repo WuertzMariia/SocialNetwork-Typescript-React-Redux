@@ -4,6 +4,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.3",
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.1",
     "@testing-library/user-event": "^12.2.2",
@@ -16,6 +20,7 @@
     "@types/use-deep-compare-effect": "^1.5.1",
     "antd": "^4.15.0",
     "axios": "^0.21.1",
+    "babel-loader": "8.1.0",
     "final-form": "^4.20.1",
     "formik": "^2.2.6",
     "lodash": "^4.17.21",
@@ -24,6 +29,7 @@
     "react-dom": "^17.0.1",
     "react-final-form": "^6.5.2",
     "react-hooks-use-previous": "^1.1.1",
+    "react-id-generator": "^3.0.1",
     "react-redux": "^7.2.2",
     "react-router-config": "^5.1.1",
     "react-router-dom": "^5.2.0",
@@ -31,7 +37,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "typescript": "4.0.5",
+    "typescript": "^3.2.1",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
@@ -40,12 +46,23 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.stories.*"
+        ],
+        "rules": {
+          "import/no-anonymous-default-export": "off"
+        }
+      }
     ]
   },
   "browserslist": {

@@ -7,6 +7,7 @@ import usersReducer from './usersReducer';
 import thunkMiddleware from 'redux-thunk';
 import {appReducer} from './appReducer';
 import chatReducer from './chatReducer';
+import todoListReducer from './todoListReducer';
 
 let reducers = combineReducers(
     {
@@ -16,7 +17,8 @@ let reducers = combineReducers(
         usersPage: usersReducer,
         auth: authReducer,
         appMain: appReducer,
-            chat: chatReducer
+            chat: chatReducer,
+        todoList: todoListReducer
     }
 )
 

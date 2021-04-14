@@ -1,8 +1,16 @@
-import usersReducer, {actions, InitialStateTypeUsersReducer, subscribe, unsubscribe} from './usersReducer';
+import usersReducer, {
+    actions,
+    InitialStateTypeUsersReducer,
+    subscribe,
+    unsubscribe,
+    UsersShortType
+} from './usersReducer';
 import {usersApi} from '../api/usersApi';
 import {ResultCodesEnum} from '../api/api';
 
-let state: InitialStateTypeUsersReducer;
+
+let state;
+type InitialStateType = typeof state;
 
 beforeEach(() => {
     state = {

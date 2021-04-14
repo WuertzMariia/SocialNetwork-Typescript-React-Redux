@@ -15,6 +15,7 @@ import {LaptopOutlined, UserOutlined} from '@ant-design/icons';
 import FriendsContainer from './components/Sidebar/Friends/Friends';
 import {Header} from './components/Header/Header';
 import {ChatPage} from './components/Chat/ChatPage';
+import {TodoListPage} from './components/TodoList/TodoListPage';
 
 const UsersPageContainer = React.lazy(() => import('./components/Users/Users_Container'));
 const DialogsPageContainer = React.lazy(() => import('./components/Dialogs/Dialogs_Container'));
@@ -63,7 +64,7 @@ class App extends React.Component<MapPropsType & DispatchPropsType> {
                                 {/*<Menu.Item key="8">option8</Menu.Item>*/}
                             </SubMenu>
                             {/*<SubMenu key="sub3" icon={<NotificationOutlined/>} title="Dialogs" style={{}}>*/}
-                            {/*    <Menu.Item key="9">Messages</Menu.Item>*/}
+                                <Menu.Item key="9"><NavLink to={'/todolist'}>Todo List</NavLink></Menu.Item>
                             {/*    <Menu.Item key="10">option10</Menu.Item>*/}
                             {/*    <Menu.Item key="11">option11</Menu.Item>*/}
                             {/*    <Menu.Item key="12">option12</Menu.Item>*/}
@@ -100,6 +101,8 @@ class App extends React.Component<MapPropsType & DispatchPropsType> {
                                 </Suspense>
                                 <Route path="/login" render={() => <Login/>}/>
                                 <Route path="/chat" render={() => <ChatPage/>}/>
+
+                                <Route path="/todolist" render={() => <TodoListPage/>}/>
                             </div>
                         </Content>
                     </Layout>

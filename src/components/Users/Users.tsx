@@ -31,72 +31,87 @@ const Users: React.FC<UsersComponentType> = (props) => {
     const dispatch = useDispatch();
     const usersPageUsers = useSelector(requestUsers);
     const history = useHistory();
-        const prevDev = useRef(usersPageUsers);
-        let currentPage = useSelector(requestPage);
-        let filter = useSelector(filterSelector);
-        useEffect(() => {
+    const prevDev = useRef(usersPageUsers);
+    let currentPage = useSelector(requestPage);
+    let filter = useSelector(filterSelector);
+    useEffect(() => {
 
 
-            let actualPage= currentPage;
-            let actualFilter= filter;
-            const {search} = history.location;
-            const parsed= queryString.parse(search.substr(1)) as {
-                term: string,
-                page: string,
-                friend: string
+        let actualPage = currentPage;
+        let actualFilter = filter;
+        const {search} = history.location;
+        const parsed = queryString.parse(search.substr(1)) as {
+            term: string,
+            page: string,
+            friend: string
+        };
+        if (!!parsed.page) {
+            actualPage = +parsed.page
+        }
+
+        if (!!parsed.term) {
+            actualFilter = {...actualFilter, term: parsed.term as string};
+
+        }
+        if (!!parsed.friend) {
+            actualFilter = {
+                ...actualFilter,
+                friend: parsed.friend === 'null' ? null : parsed.friend === 'true' ? true : false
             };
-            if(!!parsed.page){actualPage = +parsed.page};
-            if(!!parsed.term) {
-                actualFilter = {...actualFilter, term: parsed.term as string};
 
+        }
+
+        const isSame = prevDev.current.every((obj, index) => isEqual(obj, usersPageUsers[index]));
+        if (!isSame || usersPageUsers.length === 0) {
+            if (props.match.params.friends) {
+                dispatch(getAllUsersFriends(actualPage, pageSize));
+            } else {
+                dispatch(getUsers(actualPage, pageSize, actualFilter));
             }
-            if(!!parsed.friend) {
-                actualFilter = {...actualFilter, friend: parsed.friend === "null" ? null : parsed.friend === "true" ? true:  false};
+        }
+        const query: any = {};
+        if (!!filter.term) {
+            query.term = filter.term;
+        }
+        if (filter.friend != null) {
+            query.friend = filter.friend
+        }
+        query.page = currentPage;
+        history.push({
+            pathname: '/users',
+            search: queryString.stringify(query)
+            // search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
+        })
+        prevDev.current = usersPageUsers;
+    }, [])
 
-            }
+    // const didMount = useRef(false);
+    // useEffect(() => {
+    //     const query: any = {};
+    //     if (!!filter.term) {
+    //         query.term = filter.term;
+    //     }
+    //     if (filter.friend != null) {
+    //         query.friend = filter.friend
+    //     }
+    //     query.page = currentPage;
+    //     if (didMount.current) {
+    //         history.push({
+    //             pathname: '/users',
+    //             search: queryString.stringify(query)
+    //             // search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
+    //         })
+    //     } else {
+    //         didMount.current = true;
+    //     }
+    //     return () => {
+    //         didMount.current = false;
+    //
+    //     }
+    // }, [filter, currentPage]);
 
-            const isSame = prevDev.current.every((obj, index) => isEqual(obj, usersPageUsers[index]));
-            if (!isSame || usersPageUsers.length === 0) {
-                if (props.match.params.friends) {
-                    dispatch(getAllUsersFriends(actualPage, pageSize));
-                } else {
-                    dispatch(getUsers(actualPage, pageSize, actualFilter));
-                }
-            }
 
-            // history.push({
-            //     pathname: '/users',
-            //     search: `?term=${actualFilter.term}&friend=${actualFilter.friend}&page=${String(actualPage)}`
-            // })
-            prevDev.current = usersPageUsers;
-        }, [])
-// useEffect(()=> {
-//     history.push({
-//         pathname: '/users',
-//         search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
-//     })
-// }, [filter, currentPage]);
-    const useDidMountEffect = () => {
-            const didMount = useRef(false);
-            useEffect(()=> {
-                if(didMount.current) {
-                    history.push({
-                        pathname: '/users',
-                        search: `?term=${filter.term}&friend=${filter.friend}&page=${String(currentPage)}`
-                    })
-                } else {
-                    didMount.current = true;
-                }
-                return () => {
-                    didMount.current = false;
-
-                }
-            }, [filter, currentPage]);
-
-    }
-    useDidMountEffect();
-
-        const onBtnPageClick = (p: number) => {
+    const onBtnPageClick = (p: number) => {
         if (props.match.params.friends) {
             dispatch(getAllUsersFriends(p, pageSize));
         } else {
@@ -134,7 +149,7 @@ const Users: React.FC<UsersComponentType> = (props) => {
                 <div className={s.logo}>
                     <div>
                         <NavLink to={'/profile/' + u.id}>
-                            <img style={{maxWidth: "50px"}} alt="users avatar" className={s.img_class}
+                            <img style={{maxWidth: '50px'}} alt="users avatar" className={s.img_class}
                                  src={u.photos.small != null ? u.photos.small : userPhoto}></img>
                         </NavLink>
                     </div>
@@ -142,11 +157,11 @@ const Users: React.FC<UsersComponentType> = (props) => {
                         <Button disabled={subscriptionProcessed.some(id => id === u.id)}
                                 className={s.btn_foll} onClick={() => {
                             unfollow(u.id);
-                        }} type={"default"}>Unfollow</Button> :
+                        }} type={'default'}>Unfollow</Button> :
                         <Button disabled={subscriptionProcessed.some(id => id === u.id)}
                                 className={s.btn_foll} onClick={() => {
                             follow(u.id);
-                        }} type={"default"}>Follow</Button>}
+                        }} type={'default'}>Follow</Button>}
                 </div>
                 <div>
                     <NavLink className={s.link_style}
@@ -182,11 +197,11 @@ const Users: React.FC<UsersComponentType> = (props) => {
 
 const UsersSearchForm = React.memo((props: { onSearchBtnClick: (s: { term: string; friend: boolean | null }) => void }) => {
 
-    let filter=useSelector(filterSelector);
+    let filter = useSelector(filterSelector);
 
     interface Values {
         term: string,
-        friend: "true" | "false" | "null"
+        friend: 'true' | 'false' | 'null'
 
     }
 
@@ -209,7 +224,7 @@ const UsersSearchForm = React.memo((props: { onSearchBtnClick: (s: { term: strin
             enableReinitialize={true}
             initialValues={{
                 term: filter.term,
-                friend: String(filter.friend) as "true" | "false" | "null"
+                friend: String(filter.friend) as 'true' | 'false' | 'null'
             }}
             onSubmit={submitFunc}
         >

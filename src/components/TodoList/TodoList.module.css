@@ -1,0 +1,27 @@
+.main {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.eachTask {
+    padding: 20px;
+    background: #ececec;
+margin: 15px;
+}
+
+.smallTasks {
+    margin: 10px;
+}
+
+.styleEachTask{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.checkbox_style:checked {
+    text-decoration:line-through;
+    background-color: #647dee;
+}
+

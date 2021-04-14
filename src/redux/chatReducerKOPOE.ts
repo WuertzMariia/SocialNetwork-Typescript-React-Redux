@@ -37,46 +37,6 @@ const actions = {
 }
 
 type ThunkType = ThunkAction<Promise<void>, AppStateType, any, ActionType>;
-let _newMessageHandler: ((messages: ChatData[]) => void) | null = null;
-
-const newMessageHandler = (dispatch: Dispatch) => (messages: ChatData[]) => {
-    if (_newMessageHandler === null) {
-        _newMessageHandler = (messages) => {
-            dispatch(actions.setMessages(messages));
-            return;
-        }
-    }
-    return _newMessageHandler(messages);
-}
-
-let _newStatusHandler: ((status: StatusType) => void) | null = null;
-const newStatusHandler = (dispatch: Dispatch) => (status:StatusType) => {
-    if(_newStatusHandler === null) {
-        _newStatusHandler = (status) => {
-            dispatch(actions.statusCondition(status));
-            return;
-        }
-    }
-    return _newStatusHandler(status);
-}
-
-export const startMessagesListening = (): ThunkType => {
-    return async (dispatch, getState) => {
-        chatAPI.start();
-        chatAPI.subscribe('message-received', newMessageHandler(dispatch))
-        chatAPI.subscribe('status-changed', newStatusHandler(dispatch))
-
-    };
-}
-
-export const stopMessagesListening = (): ThunkType => {
-    return async (dispatch, getState) => {
-        chatAPI.stop();
-        chatAPI.unsubscribe('message-received', newMessageHandler(dispatch))
-        chatAPI.unsubscribe('status-changed', newStatusHandler(dispatch))
-
-    };
-}
 
 export const sendMessageThunk = (message: string): ThunkType => {
     return async (dispatch, getState) => {
